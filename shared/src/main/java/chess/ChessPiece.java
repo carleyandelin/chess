@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -9,8 +10,12 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
+    private final PieceType type;
+    private final ChessGame.TeamColor pieceColor;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.type = type;
+        this.pieceColor = pieceColor;
     }
 
     /**
@@ -43,12 +48,10 @@ public class ChessPiece {
     public String toString() {
         return super.toString();
     }
-
     @Override
     public int hashCode() {
         return super.hashCode();
     }
-
     @Override
     public boolean equals(Object obj) {
         return super.equals(obj);
@@ -62,6 +65,22 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        switch (type) {
+            case KING:
+                throw new RuntimeException("Not implemented yet");
+            case QUEEN:
+                throw new RuntimeException("Not implemented yet");
+            case BISHOP:
+                throw new RuntimeException("Not implemented yet");
+                // return BishopMoves.bishopMoves(board, myPosition);
+            case KNIGHT:
+                throw new RuntimeException("Not implemented yet");
+            case ROOK:
+                throw new RuntimeException("Not implemented yet");
+            case PAWN:
+                throw new RuntimeException("Not implemented yet");
+            default:
+                throw new RuntimeException("Unknown piece type: " + type);
+        }
     }
 }
