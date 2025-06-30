@@ -67,20 +67,71 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         switch (type) {
             case KING:
-                throw new RuntimeException("Not implemented yet");
+                return kingMoves(board, myPosition);
             case QUEEN:
-                throw new RuntimeException("Not implemented yet");
+                return queenMoves(board, myPosition);
             case BISHOP:
-                throw new RuntimeException("Not implemented yet");
-                // return BishopMoves.bishopMoves(board, myPosition);
+                return bishopMoves(board, myPosition);
             case KNIGHT:
-                throw new RuntimeException("Not implemented yet");
+                return knightMoves(board, myPosition);
             case ROOK:
-                throw new RuntimeException("Not implemented yet");
+                return rookMoves(board, myPosition);
             case PAWN:
-                throw new RuntimeException("Not implemented yet");
+                return pawnMoves(board, myPosition);
             default:
                 throw new RuntimeException("Unknown piece type: " + type);
         }
     }
+
+    public Collection<ChessMove> kingMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented yet");
+        //Collection<ChessMove> moves = new ArrayList<>();
+        //return moves;
+    }
+
+    public Collection<ChessMove> queenMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented yet");
+        //Collection<ChessMove> moves = new ArrayList<>();
+        //return moves;
+    }
+
+    public Collection<ChessMove> bishopMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> moves = new ArrayList<>();
+        int[][] possibleDirections = {
+                {1, 1},   // down-right
+                {1, -1},  // down-left
+                {-1, 1},  // up-right
+                {-1, -1}  // up-left
+        };
+
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        for (int[] direction : possibleDirections) {
+            // Move in the direction until the edge of the board or a piece is encountered
+        }
+
+
+
+
+        return moves;
+    }
+
+    public Collection<ChessMove> knightMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented yet");
+        //Collection<ChessMove> moves = new ArrayList<>();
+        //return moves;
+    }
+
+    public Collection<ChessMove> rookMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented yet");
+        //Collection<ChessMove> moves = new ArrayList<>();
+        //return moves;
+    }
+
+    public Collection<ChessMove> pawnMoves(ChessBoard board, ChessPosition myPosition) {
+        throw new RuntimeException("Not implemented yet");
+        //Collection<ChessMove> moves = new ArrayList<>();
+        //return moves;
+    }
+
 }
