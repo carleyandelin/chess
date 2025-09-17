@@ -179,7 +179,17 @@ public class ChessPiece {
                 }
             }
             case PieceType.PAWN -> {
-                // pawn move logic
+                if (this.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                    // white pawn move logic
+                    /*
+                    if initial, can move 1 or 2 spaces forward
+                    else if not initial, can move 1 space forward
+                    else if can capture diagonally, can move diagonally
+                    else if moving to the last row, can promote to any piece except king
+                     */
+                    // do that ^ again for black pawn logic but different Row numbers
+                    if (myPosition.getRow() == 2) {}
+                }
             }
             default -> {
                 throw new RuntimeException("Unknown piece type");
