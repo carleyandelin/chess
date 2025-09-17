@@ -131,6 +131,29 @@ public class ChessPiece {
             }
             case PieceType.ROOK -> {
                 // rook move logic
+                int [] rowDirections = {-1, 0, 1, 0};
+                int [] colDirections = {0, 1, 0, -1};
+                for (int d = 0; d < rowDirections.length; d++) {
+                    int r = rowDirections[d];
+                    int c = colDirections[d];
+                    int newRow = myPosition.getRow();
+                    int newCol = myPosition.getColumn();
+                    while (true) {
+                        newRow += r;
+                        newCol += c;
+                        if (newRow < 1 || newRow > 8 || newCol < 1 || newCol > 8) break;
+                        var newPos = new ChessPosition(newRow, newCol);
+                        var targetPiece = board.getPiece(newPos);
+                        if (targetPiece == null) {
+                            possibleMoves.add(new ChessMove(myPosition, newPos, null));
+                        } else {
+                            if (targetPiece.getTeamColor() != this.getTeamColor()) {
+                                possibleMoves.add(new ChessMove(myPosition, newPos, null));
+                            }
+                            break; // Stop if blocked
+                        }
+                    }
+                }
             }
             case PieceType.PAWN -> {
                 // pawn move logic
