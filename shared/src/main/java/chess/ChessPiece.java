@@ -70,7 +70,6 @@ public class ChessPiece {
         switch (board.getPiece(myPosition).getPieceType()) {
             case PieceType.KING -> {
                 // king move logic
-                /*
                 int[] rowMoves = {-1, -1, -1, 0, 0, 1, 1, 1};
                 int[] colMoves = {-1, 0, 1, -1, 1, -1, 0, 1};
                 for (int i = 0; i < 8; i++) {
@@ -84,7 +83,6 @@ public class ChessPiece {
                         }
                     }
                  }
-                 */
             }
             case PieceType.QUEEN -> {
                 // queen move logic
