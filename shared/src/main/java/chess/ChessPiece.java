@@ -115,6 +115,19 @@ public class ChessPiece {
             }
             case PieceType.KNIGHT -> {
                 // knight move logic
+                int[] rowMoves = {1, 2, 2, 1, -1, -2, -2, -1};
+                int[] colMoves = {2, 1, -1, -2, -2, -1, 1, 2};
+                for (int i = 0; i < rowMoves.length; i++) {
+                    int newRow = myPosition.getRow() + rowMoves[i];
+                    int newCol = myPosition.getColumn() + colMoves[i];
+                    if (newRow >= 1 && newRow <= 8 && newCol >= 1 && newCol <= 8) {
+                        var newPos = new ChessPosition(newRow, newCol);
+                        var targetPiece = board.getPiece(newPos);
+                        if (targetPiece == null || targetPiece.getTeamColor() != this.getTeamColor()) {
+                            possibleMoves.add(new ChessMove(myPosition, newPos, null));
+                        }
+                    }
+                }
             }
             case PieceType.ROOK -> {
                 // rook move logic
