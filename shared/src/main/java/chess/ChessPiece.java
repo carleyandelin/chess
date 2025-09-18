@@ -179,16 +179,51 @@ public class ChessPiece {
                 }
             }
             case PieceType.PAWN -> {
+                // white pawn move logic
                 if (this.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                    // white pawn move logic
-                    /*
-                    if initial, can move 1 or 2 spaces forward
-                    else if not initial, can move 1 space forward
-                    else if can capture diagonally, can move diagonally
-                    else if moving to the last row, can promote to any piece except king
-                     */
-                    // do that ^ again for black pawn logic but different Row numbers
-                    if (myPosition.getRow() == 2) {}
+                    // if initial, can move 1 or 2 spaces forward
+                    if (myPosition.getRow() == 2) {
+                        var newPos1 = new ChessPosition(3, myPosition.getColumn());
+                        var targetPiece1 = board.getPiece(newPos1);
+                        if (targetPiece1 == null) {
+                            possibleMoves.add(new ChessMove(myPosition, newPos1, null));
+                        }
+                        var newPos2 = new ChessPosition(4, myPosition.getColumn());
+                        var targetPiece2 = board.getPiece(newPos2);
+                        if (targetPiece2 == null) {
+                            possibleMoves.add(new ChessMove(myPosition, newPos2, null));
+                        }
+                    }
+                    // else if not initial, can move 1 space forward
+                    else if ((3 <= myPosition.getRow()) && (myPosition.getRow() < 7)) {
+                        var newPos1 = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn());
+                        var targetPiece1 = board.getPiece(newPos1);
+                        if (targetPiece1 == null) {
+                            possibleMoves.add(new ChessMove(myPosition, newPos1, null));
+                        }
+                    }
+                    // else if can capture diagonally, can move diagonally
+                    var newPos1 = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-1);
+                    var targetPiece1 = board.getPiece(newPos1);
+                    var newPos2 = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+1);
+                    var targetPiece2 = board.getPiece(newPos2);
+                    if (targetPiece1 != null) {
+                        possibleMoves.add(new ChessMove(myPosition, newPos1, null));
+                    }
+                    if (targetPiece2 != null) {
+                        possibleMoves.add(new ChessMove(myPosition, newPos2, null));
+                    }
+                    // else if moving to the last row, can promote to any piece except king
+                    if (myPosition.getRow() == 7) {
+                        var newPos = new ChessPosition(8, myPosition.getColumn());
+                        var targetPiece = board.getPiece(newPos);
+                        if (targetPiece == null) {
+                            possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.QUEEN));
+                            possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.BISHOP));
+                            possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.KNIGHT));
+                            possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.ROOK));
+                        }
+                    }
                 }
             }
             default -> {
