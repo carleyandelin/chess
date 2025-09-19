@@ -203,15 +203,37 @@ public class ChessPiece {
                         }
                     }
                     // else if can capture diagonally, can move diagonally
-                    var newPos1 = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-1);
-                    var targetPiece1 = board.getPiece(newPos1);
-                    var newPos2 = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+1);
-                    var targetPiece2 = board.getPiece(newPos2);
-                    if (targetPiece1 != null) {
-                        possibleMoves.add(new ChessMove(myPosition, newPos1, null));
+                    // check left diagonal
+                    if (myPosition.getColumn() > 1) {
+                        var newPos1 = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()-1);
+                        var targetPiece1 = board.getPiece(newPos1);
+                        if (targetPiece1 != null && targetPiece1.getTeamColor() != this.getTeamColor()) {
+                            if (myPosition.getRow() == 7) {
+                                // capture and promote
+                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.QUEEN));
+                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.BISHOP));
+                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.KNIGHT));
+                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.ROOK));
+                            } else {
+                                possibleMoves.add(new ChessMove(myPosition, newPos1, null));
+                            }
+                        }
                     }
-                    if (targetPiece2 != null) {
-                        possibleMoves.add(new ChessMove(myPosition, newPos2, null));
+                    // check right diagonal
+                    if (myPosition.getColumn() < 8) {
+                        var newPos2 = new ChessPosition(myPosition.getRow()+1, myPosition.getColumn()+1);
+                        var targetPiece2 = board.getPiece(newPos2);
+                        if (targetPiece2 != null && targetPiece2.getTeamColor() != this.getTeamColor()) {
+                            if (myPosition.getRow() == 7) {
+                                // capture and promote
+                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.QUEEN));
+                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.BISHOP));
+                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.KNIGHT));
+                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.ROOK));
+                            } else {
+                                possibleMoves.add(new ChessMove(myPosition, newPos2, null));
+                            }
+                        }
                     }
                     // else if moving to the last row, can promote to any piece except king
                     if (myPosition.getRow() == 7) {
@@ -223,19 +245,6 @@ public class ChessPiece {
                             possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.KNIGHT));
                             possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.ROOK));
                         }
-                    }
-                    // if capture AND promotion
-                    if ((myPosition.getRow() == 7) && (targetPiece1 != null)) {
-                        possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.QUEEN));
-                        possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.BISHOP));
-                        possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.KNIGHT));
-                        possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.ROOK));
-                    }
-                    if ((myPosition.getRow() == 7) && (targetPiece2 != null)) {
-                        possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.QUEEN));
-                        possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.BISHOP));
-                        possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.KNIGHT));
-                        possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.ROOK));
                     }
                 }
                 // BLACK pawn move logic
@@ -262,15 +271,37 @@ public class ChessPiece {
                         }
                     }
                     // else if can capture diagonally, can move diagonally
-                    var newPos1 = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-1);
-                    var targetPiece1 = board.getPiece(newPos1);
-                    var newPos2 = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+1);
-                    var targetPiece2 = board.getPiece(newPos2);
-                    if (targetPiece1 != null) {
-                        possibleMoves.add(new ChessMove(myPosition, newPos1, null));
+                    // check left diagonal
+                    if (myPosition.getColumn() > 1){
+                        var newPos1 = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()-1);
+                        var targetPiece1 = board.getPiece(newPos1);
+                        if (targetPiece1 != null && targetPiece1.getTeamColor() != this.getTeamColor()) {
+                            if (myPosition.getRow() == 2) {
+                                // capture and promote
+                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.QUEEN));
+                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.BISHOP));
+                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.KNIGHT));
+                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.ROOK));
+                            } else {
+                                possibleMoves.add(new ChessMove(myPosition, newPos1, null));
+                            }
+                        }
                     }
-                    if (targetPiece2 != null) {
-                        possibleMoves.add(new ChessMove(myPosition, newPos2, null));
+                    // check right diagonal
+                    if (myPosition.getColumn() < 8) {
+                        var newPos2 = new ChessPosition(myPosition.getRow()-1, myPosition.getColumn()+1);
+                        var targetPiece2 = board.getPiece(newPos2);
+                        if (targetPiece2 != null && targetPiece2.getTeamColor() != this.getTeamColor()) {
+                            if (myPosition.getRow() == 2) {
+                                // capture and promote
+                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.QUEEN));
+                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.BISHOP));
+                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.KNIGHT));
+                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.ROOK));
+                            } else {
+                                possibleMoves.add(new ChessMove(myPosition, newPos2, null));
+                            }
+                        }
                     }
                     // else if moving to the last row, can promote to any piece except king
                     if (myPosition.getRow() == 2) {
@@ -282,19 +313,6 @@ public class ChessPiece {
                             possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.KNIGHT));
                             possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.ROOK));
                         }
-                    }
-                    // if capture AND promotion
-                    if ((myPosition.getRow() == 2) && (targetPiece1 != null)) {
-                        possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.QUEEN));
-                        possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.BISHOP));
-                        possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.KNIGHT));
-                        possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.ROOK));
-                    }
-                    if ((myPosition.getRow() == 2) && (targetPiece2 != null)) {
-                        possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.QUEEN));
-                        possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.BISHOP));
-                        possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.KNIGHT));
-                        possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.ROOK));
                     }
                 }
             }
@@ -308,8 +326,6 @@ public class ChessPiece {
 
 /*
 PAWN TEST CASES TO FIX
--capture and promote
--pawn capture only enemy piece, now own
 -pawn move from edge
 capture from edge
  */
