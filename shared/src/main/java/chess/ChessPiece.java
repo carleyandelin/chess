@@ -179,6 +179,8 @@ public class ChessPiece {
                 }
             }
             case PieceType.PAWN -> {
+                // REFRACTERING PAWN LOGIC
+                PieceType[] promotionType = {PieceType.ROOK, PieceType.BISHOP, PieceType.KNIGHT, PieceType.QUEEN};
                 // WHITE pawn move logic
                 if (this.getTeamColor() == ChessGame.TeamColor.WHITE) {
                     // if initial, can move 1 or 2 spaces forward
@@ -210,10 +212,9 @@ public class ChessPiece {
                         if (targetPiece1 != null && targetPiece1.getTeamColor() != this.getTeamColor()) {
                             if (myPosition.getRow() == 7) {
                                 // capture and promote
-                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.QUEEN));
-                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.BISHOP));
-                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.KNIGHT));
-                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.ROOK));
+                                for (PieceType type : promotionType) {
+                                    possibleMoves.add(new ChessMove(myPosition, newPos1, type));
+                                }
                             } else {
                                 possibleMoves.add(new ChessMove(myPosition, newPos1, null));
                             }
@@ -226,10 +227,9 @@ public class ChessPiece {
                         if (targetPiece2 != null && targetPiece2.getTeamColor() != this.getTeamColor()) {
                             if (myPosition.getRow() == 7) {
                                 // capture and promote
-                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.QUEEN));
-                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.BISHOP));
-                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.KNIGHT));
-                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.ROOK));
+                                for (PieceType type : promotionType) {
+                                    possibleMoves.add(new ChessMove(myPosition, newPos2, type));
+                                }
                             } else {
                                 possibleMoves.add(new ChessMove(myPosition, newPos2, null));
                             }
@@ -240,10 +240,9 @@ public class ChessPiece {
                         var newPos = new ChessPosition(8, myPosition.getColumn());
                         var targetPiece = board.getPiece(newPos);
                         if (targetPiece == null) {
-                            possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.QUEEN));
-                            possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.BISHOP));
-                            possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.KNIGHT));
-                            possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.ROOK));
+                            for (PieceType type : promotionType) {
+                                possibleMoves.add(new ChessMove(myPosition, newPos, type));
+                            }
                         }
                     }
                 }
@@ -278,10 +277,9 @@ public class ChessPiece {
                         if (targetPiece1 != null && targetPiece1.getTeamColor() != this.getTeamColor()) {
                             if (myPosition.getRow() == 2) {
                                 // capture and promote
-                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.QUEEN));
-                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.BISHOP));
-                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.KNIGHT));
-                                possibleMoves.add(new ChessMove(myPosition, newPos1, ChessPiece.PieceType.ROOK));
+                                for (PieceType type : promotionType) {
+                                    possibleMoves.add(new ChessMove(myPosition, newPos1, type));
+                                }
                             } else {
                                 possibleMoves.add(new ChessMove(myPosition, newPos1, null));
                             }
@@ -294,10 +292,9 @@ public class ChessPiece {
                         if (targetPiece2 != null && targetPiece2.getTeamColor() != this.getTeamColor()) {
                             if (myPosition.getRow() == 2) {
                                 // capture and promote
-                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.QUEEN));
-                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.BISHOP));
-                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.KNIGHT));
-                                possibleMoves.add(new ChessMove(myPosition, newPos2, ChessPiece.PieceType.ROOK));
+                                for (PieceType type : promotionType) {
+                                    possibleMoves.add(new ChessMove(myPosition, newPos2, type));
+                                }
                             } else {
                                 possibleMoves.add(new ChessMove(myPosition, newPos2, null));
                             }
@@ -308,10 +305,9 @@ public class ChessPiece {
                         var newPos = new ChessPosition(1, myPosition.getColumn());
                         var targetPiece = board.getPiece(newPos);
                         if (targetPiece == null) {
-                            possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.QUEEN));
-                            possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.BISHOP));
-                            possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.KNIGHT));
-                            possibleMoves.add(new ChessMove(myPosition, newPos, ChessPiece.PieceType.ROOK));
+                            for (PieceType type : promotionType) {
+                                possibleMoves.add(new ChessMove(myPosition, newPos, type));
+                            }
                         }
                     }
                 }
