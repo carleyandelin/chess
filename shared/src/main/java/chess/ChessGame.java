@@ -112,6 +112,16 @@ public class ChessGame {
      *
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
+     *
+     * Gameplan:
+     *
+     * for every position the King could go {
+     *     if !isInCheck {
+     *         return false
+     *     }
+     * }
+     * return true
+     *
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         throw new RuntimeException("Not implemented");
