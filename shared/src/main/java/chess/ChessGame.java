@@ -111,6 +111,7 @@ public class ChessGame {
      *         }
      *     }
      * }
+     * return false
      *
      */
     public boolean isInCheck(TeamColor teamColor) {
@@ -162,7 +163,34 @@ public class ChessGame {
      *
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        // get teamColor's king's position AND all potential positions
+        var kingCurrAndPotential = new ArrayList<ChessPosition>();
+        ChessPosition kingSpot = null;
+        for (int row = 1; row <= 8 && kingSpot == null; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                    kingSpot = new ChessPosition(row, col);
+                    kingCurrAndPotential.add(kingSpot);
+                    break;
+                }
+            }
+        }
+        // if not in check, can't be checkmate
+        if (!isInCheck(teamColor)) { return false; }
+        var kingPotential = board.getPiece(kingSpot).pieceMoves(board, kingSpot);
+        for (ChessMove move : kingPotential) {
+            ChessPosition spot = new ChessPosition(move.endPosition.getRow(), move.endPosition.getColumn());
+            kingCurrAndPotential.add(spot);
+        }
+
+        for (ChessPosition pos : kingCurrAndPotential) {
+            if (!(isInCheck(teamColor))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
