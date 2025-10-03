@@ -66,6 +66,8 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         throw new RuntimeException("Not implemented");
+        // call ChessPiece.pieceMoves method. That returns a list of all the possible moves
+        // go through a for loop of all those moves and if isInCheck returns true remove it from the list
     }
 
     /**
