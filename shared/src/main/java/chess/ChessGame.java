@@ -229,33 +229,25 @@ public class ChessGame {
      *
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        // get teamColor's king's position AND all potential positions
-        var kingCurrAndPotential = new ArrayList<ChessPosition>();
-        ChessPosition kingSpot = null;
-        for (int row = 1; row <= 8 && kingSpot == null; row++) {
+        // check if the team is in check
+        if (!isInCheck(teamColor)) {
+            return false; // can't be checkmate if not already in check
+        }
+        // get all pieces of the team
+        for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
-                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
-                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
-                    kingSpot = new ChessPosition(row, col);
-                    kingCurrAndPotential.add(kingSpot);
-                    break;
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(position);
+                // if the piece belongs to the team in check get it's valid moves
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    Collection<ChessMove> validMoves = validMoves(position);
+                    // if any piece has valid moves, it's not checkmate
+                    if (validMoves != null && !validMoves.isEmpty()) {
+                        return false;
+                    }
                 }
             }
         }
-        // if not in check, can't be checkmate
-        if (!isInCheck(teamColor)) { return false; }
-        var kingPotential = board.getPiece(kingSpot).pieceMoves(board, kingSpot);
-        for (ChessMove move : kingPotential) {
-            ChessPosition spot = new ChessPosition(move.endPosition.getRow(), move.endPosition.getColumn());
-            kingCurrAndPotential.add(spot);
-        }
-
-        for (ChessPosition pos : kingCurrAndPotential) {
-            if (!(isInCheck(teamColor))) {
-                return false;
-            }
-        }
-
         return true;
     }
 
