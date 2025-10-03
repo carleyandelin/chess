@@ -204,7 +204,7 @@ public class ChessGame {
             ChessPiece piece = board.getPiece(position);
             Collection<ChessMove> possibleMoves = piece.pieceMoves(board, position);
             for (ChessMove move : possibleMoves) {
-                if (move.getEndPosition() == kingSpot) {
+                if (move.getEndPosition().equals(kingSpot)) {
                     return true;
                 }
             }
