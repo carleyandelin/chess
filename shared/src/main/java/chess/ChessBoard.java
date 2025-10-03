@@ -51,6 +51,17 @@ public class ChessBoard {
         return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
+    public ChessPosition getPosition(ChessPiece piece) {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board[i][j] == piece) {
+                    return new ChessPosition(i + 1, j + 1);
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
