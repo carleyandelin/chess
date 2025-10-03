@@ -51,6 +51,7 @@ public class ChessBoard {
         return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
+    // this didn't actually worked how I wanted it too, but keeping it just in case;
     public ChessPosition getPosition(ChessPiece piece) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {

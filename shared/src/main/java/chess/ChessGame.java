@@ -112,7 +112,20 @@ public class ChessGame {
      *
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        // get teamColor King's position
+        ChessPosition kingSpot = null;
+        for (int row = 1; row <= 8 && kingSpot == null; row++) {
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+                if (piece != null && piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor) {
+                    kingSpot = new ChessPosition(row, col);
+                    break;
+                }
+            }
+        }
+        // get all current opposingPositions
+
+        //loop through possibleMoves of opposingPositions and see if any match kingSpot
     }
 
     /**
