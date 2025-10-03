@@ -65,11 +65,37 @@ public class ChessGame {
      * @param startPosition the piece to get valid moves for
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
+     *
+     * call ChessPiece.pieceMoves method. That returns a list of all the possible moves
+     * go through a for loop of all those moves and if isInCheck returns true remove it from the list
+     *
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
-        // call ChessPiece.pieceMoves method. That returns a list of all the possible moves
-        // go through a for loop of all those moves and if isInCheck returns true remove it from the list
+        ChessPiece piece = board.getPiece(startPosition);
+        if (piece == null) {
+            return null;
+        }
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(board, startPosition);
+        Collection<ChessMove> validMoves = new ArrayList<>();
+        // check each move to see if it follows rules of chess
+        for (ChessMove move : possibleMoves) {
+            // make a temporary move to see if king is in check afterwards
+            ChessPiece originalPiece = board.getPiece(move.getEndPosition());
+            board.addPiece(move.getStartPosition(), null);
+            if (move.getPromotionPiece() != null) {
+                ChessPiece promotedPiece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+                board.addPiece(move.getEndPosition(), promotedPiece);
+            } else {
+                board.addPiece(move.getEndPosition(), piece);
+            }
+            if (!isInCheck(piece.getTeamColor())) {
+                validMoves.add(move);
+            }
+            // undo temp move
+            board.addPiece(move.getStartPosition(), piece);
+            board.addPiece(move.getEndPosition(), originalPiece);
+        }
+        return validMoves;
     }
 
     /**
