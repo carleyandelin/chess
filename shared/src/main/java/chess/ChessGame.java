@@ -2,6 +2,8 @@ package chess;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -124,8 +126,23 @@ public class ChessGame {
             }
         }
         // get all current opposingPositions
-
+        var opposingPositions = new ArrayList<ChessPosition>();
+        for (int i = 1; i <= 8; i++) {
+            for (int j = 1; j <= 8; j++) {
+                var piece = this.board.getPiece(new ChessPosition(i, j));
+                if (piece != null && piece.pieceColor != teamColor ) {
+                    opposingPositions.add(new ChessPosition(i, j));
+                }
+            }
+        }
         //loop through possibleMoves of opposingPositions and see if any match kingSpot
+        for (ChessPosition position : opposingPositions) {
+            if (position == kingSpot) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
