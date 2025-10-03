@@ -78,6 +78,7 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         throw new RuntimeException("Not implemented");
+        //
     }
 
     /**
@@ -92,13 +93,20 @@ public class ChessGame {
      * row = King.teamColor.getRow()
      * col = King.teamColor.getColumn()
      * kingSpot = new ChessPosition(row, col)
-     * opposingOptions = new java.util.ArrayList<ChessMove>()
-     * for (type : PieceType) {
-     *     opposingOptions.add(ChessPosition.pieceMoves(type)
+     *          **create new method getPosition() with parameter piece that loops through the board array and returns
+     *          the position the piece is found.
+     * list opposingPositions[]
+     * for x,y in this.board {
+     *     if getpiece != null && getPiece == opposing color {
+     *         add x,y to opposingPositions
+     *     }
      * }
-     * for (option : opposingOptions) {
-     *     if position == kingSpot {
-     *         return true
+     * for (piece : opposingPositions) {
+     *     places = (ChessPosition.pieceMoves(type)
+     *     for (option : places) {
+     *         if position == kingSpot {
+     *             return true
+     *         }
      *     }
      * }
      *
