@@ -85,6 +85,23 @@ public class ChessGame {
      *
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
+     *
+     *
+     * Gameplan in pseudocode:
+     *
+     * row = King.teamColor.getRow()
+     * col = King.teamColor.getColumn()
+     * kingSpot = new ChessPosition(row, col)
+     * opposingOptions = new java.util.ArrayList<ChessMove>()
+     * for (type : PieceType) {
+     *     opposingOptions.add(ChessPosition.pieceMoves(type)
+     * }
+     * for (option : opposingOptions) {
+     *     if position == kingSpot {
+     *         return true
+     *     }
+     * }
+     *
      */
     public boolean isInCheck(TeamColor teamColor) {
         throw new RuntimeException("Not implemented");
