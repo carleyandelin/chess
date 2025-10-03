@@ -189,23 +189,26 @@ public class ChessGame {
                 }
             }
         }
-        // get all current opposingPositions
-        var opposingPositions = new ArrayList<ChessPosition>();
+        // get all current opposing pieces
+        var opposingPieces = new ArrayList<ChessPosition>();
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {
                 var piece = this.board.getPiece(new ChessPosition(i, j));
-                if (piece != null && piece.pieceColor != teamColor ) {
-                    opposingPositions.add(new ChessPosition(i, j));
+                if (piece != null && piece.getTeamColor() != teamColor ) {
+                    opposingPieces.add(new ChessPosition(i, j));
                 }
             }
         }
-        //loop through possibleMoves of opposingPositions and see if any match kingSpot
-        for (ChessPosition position : opposingPositions) {
-            if (position == kingSpot) {
-                return true;
+        // loop through possibleMoves of opposing pieces and see if any can capture the king
+        for (ChessPosition position : opposingPieces) {
+            ChessPiece piece = board.getPiece(position);
+            Collection<ChessMove> possibleMoves = piece.pieceMoves(board, position);
+            for (ChessMove move : possibleMoves) {
+                if (move.getEndPosition() == kingSpot) {
+                    return true;
+                }
             }
         }
-
         return false;
     }
 
