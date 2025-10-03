@@ -115,7 +115,7 @@ public class ChessGame {
      *
      * Gameplan:
      *
-     * for every position the King could go {
+     * for kings position AND every position the King could go {
      *     if !isInCheck {
      *         return false
      *     }
@@ -133,6 +133,16 @@ public class ChessGame {
      *
      * @param teamColor which team to check for stalemate
      * @return True if the specified team is in stalemate, otherwise false
+     *
+     * Gameplan:
+     *
+     * for !kings position AND every position the king could go {
+     *     if !isInCheck {
+     *         return false
+     *     }
+     * }
+     * return true
+     *
      */
     public boolean isInStalemate(TeamColor teamColor) {
         throw new RuntimeException("Not implemented");
