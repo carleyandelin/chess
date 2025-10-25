@@ -68,4 +68,17 @@ public class ChessHandler {
         }
     }
 
+    public void listGames(io.javalin.http.Context context) {
+        try {
+            String authToken = context.header("authorization");
+            GameService.ListGamesRequest request = new GameService.ListGamesRequest(authToken);
+            GameService.ListGamesResult result = gameService.listGames(request);
+            context.status(200);
+            context.result(gson.toJson(result));
+        } catch (ServiceException e) {
+            context.status(e.getStatusCode());
+            context.result(createErrorResponse(e.getMessage()));
+        }
+    }
+
 }
