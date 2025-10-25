@@ -98,4 +98,21 @@ public class ChessHandler {
         }
     }
 
+    public void joinGame(io.javalin.http.Context context) {
+        try {
+            String authToken = context.header("authorization");
+            JsonObject requestBody = gson.fromJson(context.body(), JsonObject.class);
+            String playerColor = requestBody.get("playerColor").getAsString();
+            int gameID = requestBody.get("gameID").getAsInt();
+
+            GameService.JoinGameRequest request = new GameService.JoinGameRequest(authToken, playerColor, gameID);
+            gameService.joinGame(request);
+            context.status(200);
+            context.result("{}");
+        } catch (ServiceException e) {
+            context.status(e.getStatusCode());
+            context.result(createErrorResponse(e.getMessage()));
+        }
+    }
+
 }

@@ -104,4 +104,68 @@ public class GameServiceTest {
         assertTrue(exception.getMessage().contains("unauthorized"));
     }
 
+    @Test
+    public void joinGameSuccess() throws Exception {
+        // positive
+        AuthData auth = new AuthData("test-token", "alice");
+        dataAccess.insertAuth(auth);
+
+        GameData game = new GameData(1, null, null, "My Game", new ChessGame());
+        dataAccess.insertGame(game);
+
+        // test joinGame
+        GameService.JoinGameRequest request = new GameService.JoinGameRequest("test-token", "WHITE", 1);
+        assertDoesNotThrow(() -> gameService.joinGame(request));
+
+        // verify
+        GameData updatedGame = dataAccess.getGame(1);
+        assertEquals("alice", updatedGame.whiteUsername());
+        assertNull(updatedGame.blackUsername());
+    }
+
+    @Test
+    public void joinGameBadRequest() throws Exception {
+        // negative - invalid gameID
+        AuthData auth = new AuthData("test-token", "alice");
+        dataAccess.insertAuth(auth);
+
+        GameService.JoinGameRequest request = new GameService.JoinGameRequest("test-token", "WHITE", 999);
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> {
+            gameService.joinGame(request);
+        });
+        assertEquals(400, exception.getStatusCode());
+        assertTrue(exception.getMessage().contains("bad request"));
+    }
+
+    @Test
+    public void joinGameAlreadyTaken() throws Exception {
+        // negative - color already taken
+        AuthData auth = new AuthData("test-token", "alice");
+        dataAccess.insertAuth(auth);
+
+        GameData game = new GameData(1, "bob", null, "My Game", new ChessGame());
+        dataAccess.insertGame(game);
+
+        GameService.JoinGameRequest request = new GameService.JoinGameRequest("test-token", "WHITE", 1);
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> {
+            gameService.joinGame(request);
+        });
+        assertEquals(403, exception.getStatusCode());
+        assertTrue(exception.getMessage().contains("already taken"));
+    }
+
+    @Test
+    public void joinGameUnauthorized() {
+        // negative - invalid auth token
+        GameService.JoinGameRequest request = new GameService.JoinGameRequest("invalid-token", "WHITE", 1);
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> {
+            gameService.joinGame(request);
+        });
+        assertEquals(401, exception.getStatusCode());
+        assertTrue(exception.getMessage().contains("unauthorized"));
+    }
+
 }

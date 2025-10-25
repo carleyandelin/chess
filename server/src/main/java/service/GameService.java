@@ -59,6 +59,44 @@ public class GameService {
         }
     }
 
+    public void joinGame(JoinGameRequest request) throws ServiceException {
+        try {
+            AuthData auth = dataAccess.getAuth(request.authToken());
+            if (auth == null) {
+                throw new ServiceException("Error: unauthorized", 401);
+            }
+            // validate request
+            if (request.gameID() <= 0) {
+                throw new ServiceException("Error: bad request", 400);
+            }
+            if (request.playerColor() == null) {
+                throw new ServiceException("Error: bad request", 400);
+            }
+            // get game
+            GameData game = dataAccess.getGame(request.gameID());
+            if (game == null) {
+                throw new ServiceException("Error: bad request", 400);
+            }
+            // check if color is taken
+            String username = auth.username();
+            if ("WHITE".equals(request.playerColor()) && game.whiteUsername() != null) {
+                throw new ServiceException("Error: already taken", 403);
+            }
+            if ("BLACK".equals(request.playerColor()) && game.blackUsername() != null) {
+                throw new ServiceException("Error: already taken", 403);
+            }
+            // update game
+            String whiteUsername = "WHITE".equals(request.playerColor()) ? username : game.whiteUsername();
+            String blackUsername = "BLACK".equals(request.playerColor()) ? username : game.blackUsername();
+            GameData updatedGame = new GameData(game.gameID(), whiteUsername, blackUsername, game.gameName(), game.game());
+            dataAccess.updateGame(updatedGame);
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error: " + e.getMessage(), 500);
+        }
+    }
+
+    public record JoinGameRequest(String authToken, String playerColor, int gameID) {}
+
     public record CreateGameRequest(String authToken, String gameName) {}
     public record CreateGameResult(int gameID) {}
 
