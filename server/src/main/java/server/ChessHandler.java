@@ -43,4 +43,16 @@ public class ChessHandler {
         }
     }
 
+    public void login(io.javalin.http.Context context) {
+        try {
+            UserService.LoginRequest request = gson.fromJson(context.body(), UserService.LoginRequest.class);
+            UserService.LoginResult result = userService.login(request);
+            context.status(200);
+            context.result(gson.toJson(result));
+        } catch (ServiceException e) {
+            context.status(e.getStatusCode());
+            context.result(createErrorResponse(e.getMessage()));
+        }
+    }
+
 }

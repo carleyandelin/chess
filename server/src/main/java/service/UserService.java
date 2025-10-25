@@ -44,6 +44,34 @@ public class UserService {
         return UUID.randomUUID().toString();
     }
 
+    public LoginResult login(LoginRequest request) throws ServiceException {
+        try {
+            // validate
+            if (request.username() == null || request.password() == null) {
+                throw new ServiceException("Error: bad request", 400);
+            }
+            if (request.username().isEmpty() || request.password().isEmpty()) {
+                throw new ServiceException("Error: bad request", 400);
+            }
+            // get user
+            UserData user = dataAccess.getUser(request.username());
+            if (user == null || !user.password().equals(request.password())) {
+                throw new ServiceException("Error: unauthorized", 401);
+            }
+            // create auth token
+            String authToken = generateToken();
+            AuthData auth = new AuthData(authToken, request.username());
+            dataAccess.insertAuth(auth);
+
+            return new LoginResult(request.username(), authToken);
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error: " + e.getMessage(), 500);
+        }
+    }
+
+    public record LoginRequest(String username, String password) {}
+    public record LoginResult(String username, String authToken) {}
+
     public record RegisterRequest(String username, String password, String email) {}
     public record RegisterResult(String username, String authToken) {}
 
