@@ -98,4 +98,24 @@ public class UserServiceTest {
         assertEquals(401, exception.getStatusCode());
         assertTrue(exception.getMessage().contains("unauthorized"));
     }
+
+    @Test
+    public void logoutSuccess() throws Exception {
+        // positive
+        UserService.RegisterRequest registerRequest = new UserService.RegisterRequest("alice", "password", "alice@email.com");
+        UserService.RegisterResult registerResult = userService.register(registerRequest);
+
+        UserService.LogoutRequest request = new UserService.LogoutRequest(registerResult.authToken());
+        assertDoesNotThrow(() -> userService.logout(request));
+        assertNull(dataAccess.getAuth(registerResult.authToken()));
+    }
+
+    @Test
+    public void logoutUnauthorized() {
+        //negative
+        UserService.LogoutRequest request = new UserService.LogoutRequest("invalid-token");
+        ServiceException exception = assertThrows(ServiceException.class, () -> { userService.logout(request); });
+        assertEquals(401, exception.getStatusCode());
+        assertTrue(exception.getMessage().contains("unauthorized"));
+    }
 }

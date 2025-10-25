@@ -55,4 +55,17 @@ public class ChessHandler {
         }
     }
 
+    public void logout(io.javalin.http.Context context) {
+        try {
+            String authToken = context.header("authorization");
+            UserService.LogoutRequest request = new UserService.LogoutRequest(authToken);
+            userService.logout(request);
+            context.status(200);
+            context.result("{}");
+        } catch (ServiceException e) {
+            context.status(e.getStatusCode());
+            context.result(createErrorResponse(e.getMessage()));
+        }
+    }
+
 }

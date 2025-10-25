@@ -69,6 +69,22 @@ public class UserService {
         }
     }
 
+    public void logout(LogoutRequest request) throws ServiceException {
+        try {
+            // validate auth token
+            AuthData auth = dataAccess.getAuth(request.authToken());
+            if (auth == null) {
+                throw new ServiceException("Error: unauthorized", 401);
+            }
+            // delete auth token
+            dataAccess.deleteAuth(request.authToken());
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error: " + e.getMessage(), 500);
+        }
+    }
+
+    public record LogoutRequest(String authToken) {}
+
     public record LoginRequest(String username, String password) {}
     public record LoginResult(String username, String authToken) {}
 
