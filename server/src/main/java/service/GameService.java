@@ -65,11 +65,14 @@ public class GameService {
             if (auth == null) {
                 throw new ServiceException("Error: unauthorized", 401);
             }
-            // validate request
             if (request.gameID() <= 0) {
                 throw new ServiceException("Error: bad request", 400);
             }
             if (request.playerColor() == null) {
+                throw new ServiceException("Error: bad request", 400);
+            }
+            // check if white or black
+            if (!"WHITE".equals(request.playerColor()) && !"BLACK".equals(request.playerColor())) {
                 throw new ServiceException("Error: bad request", 400);
             }
             // get game
@@ -77,7 +80,7 @@ public class GameService {
             if (game == null) {
                 throw new ServiceException("Error: bad request", 400);
             }
-            // check if color is taken
+            // check if colors taken
             String username = auth.username();
             if ("WHITE".equals(request.playerColor()) && game.whiteUsername() != null) {
                 throw new ServiceException("Error: already taken", 403);
@@ -88,7 +91,8 @@ public class GameService {
             // update game
             String whiteUsername = "WHITE".equals(request.playerColor()) ? username : game.whiteUsername();
             String blackUsername = "BLACK".equals(request.playerColor()) ? username : game.blackUsername();
-            GameData updatedGame = new GameData(game.gameID(), whiteUsername, blackUsername, game.gameName(), game.game());
+            GameData updatedGame = new GameData(game.gameID(), whiteUsername, blackUsername,
+                    game.gameName(), game.game());
             dataAccess.updateGame(updatedGame);
         } catch (DataAccessException e) {
             throw new ServiceException("Error: " + e.getMessage(), 500);
