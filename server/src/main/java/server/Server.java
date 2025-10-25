@@ -4,6 +4,7 @@ import io.javalin.*;
 import dataaccess.DataAccess;
 import service.GameService;
 import dataaccess.MemoryDataAccess;
+import service.UserService;
 
 public class Server {
 
@@ -14,10 +15,12 @@ public class Server {
 
         DataAccess dataAccess = new MemoryDataAccess();
         GameService gameService = new GameService(dataAccess);
-        ChessHandler handler = new ChessHandler(gameService);
+        UserService userService = new UserService(dataAccess);
+        ChessHandler handler = new ChessHandler(userService, gameService);
 
         // Register your endpoints and exception handlers here.
         javalin.delete("/db", handler::clear);
+        javalin.post("/user", handler::register);
 
     }
 
