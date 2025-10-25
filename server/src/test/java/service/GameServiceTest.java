@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.MemoryDataAccess;
+import dataaccess.DataAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,6 +52,53 @@ public class GameServiceTest {
 
         ServiceException exception = assertThrows(ServiceException.class, () -> {
             gameService.listGames(request);
+        });
+        assertEquals(401, exception.getStatusCode());
+        assertTrue(exception.getMessage().contains("unauthorized"));
+    }
+
+    @Test
+    public void createGameSuccess() throws Exception {
+        // positive
+        AuthData auth = new AuthData("test-token", "alice");
+        dataAccess.insertAuth(auth);
+
+        // test createGame
+        GameService.CreateGameRequest request = new GameService.CreateGameRequest("test-token", "My Game");
+        GameService.CreateGameResult result = gameService.createGame(request);
+
+        assertTrue(result.gameID() > 0);
+
+        // verify
+        GameData game = dataAccess.getGame(result.gameID());
+        assertNotNull(game);
+        assertEquals("My Game", game.gameName());
+        assertNull(game.whiteUsername());
+        assertNull(game.blackUsername());
+    }
+
+    @Test
+    public void createGameBadRequest() throws Exception {
+        // negative - empty game name
+        AuthData auth = new AuthData("test-token", "alice");
+        dataAccess.insertAuth(auth);
+
+        GameService.CreateGameRequest request = new GameService.CreateGameRequest("test-token", "");
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> {
+            gameService.createGame(request);
+        });
+        assertEquals(400, exception.getStatusCode());
+        assertTrue(exception.getMessage().contains("bad request"));
+    }
+
+    @Test
+    public void createGameUnauthorized() {
+        // negative = invalid auth
+        GameService.CreateGameRequest request = new GameService.CreateGameRequest("invalid-token", "My Game");
+
+        ServiceException exception = assertThrows(ServiceException.class, () -> {
+            gameService.createGame(request);
         });
         assertEquals(401, exception.getStatusCode());
         assertTrue(exception.getMessage().contains("unauthorized"));

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import service.GameService;
 import service.ServiceException;
 import service.UserService;
+import com.google.gson.JsonObject;
 
 public class ChessHandler {
     private final GameService gameService;
@@ -73,6 +74,22 @@ public class ChessHandler {
             String authToken = context.header("authorization");
             GameService.ListGamesRequest request = new GameService.ListGamesRequest(authToken);
             GameService.ListGamesResult result = gameService.listGames(request);
+            context.status(200);
+            context.result(gson.toJson(result));
+        } catch (ServiceException e) {
+            context.status(e.getStatusCode());
+            context.result(createErrorResponse(e.getMessage()));
+        }
+    }
+
+    public void createGame(io.javalin.http.Context context) {
+        try {
+            String authToken = context.header("authorization");
+            JsonObject requestBody = gson.fromJson(context.body(), JsonObject.class);
+            String gameName = requestBody.get("gameName").getAsString();
+
+            GameService.CreateGameRequest request = new GameService.CreateGameRequest(authToken, gameName);
+            GameService.CreateGameResult result = gameService.createGame(request);
             context.status(200);
             context.result(gson.toJson(result));
         } catch (ServiceException e) {
