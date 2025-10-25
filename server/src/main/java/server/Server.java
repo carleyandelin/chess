@@ -1,6 +1,9 @@
 package server;
 
 import io.javalin.*;
+import dataaccess.DataAccess;
+import service.GameService;
+import dataaccess.MemoryDataAccess;
 
 public class Server {
 
@@ -9,7 +12,12 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
+        DataAccess dataAccess = new MemoryDataAccess();
+        GameService gameService = new GameService(dataAccess);
+        ChessHandler handler = new ChessHandler(gameService);
+
         // Register your endpoints and exception handlers here.
+        javalin.delete("/db", handler::clear);
 
     }
 
