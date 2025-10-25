@@ -1,7 +1,7 @@
 package service;
 
 import dataaccess.DataAccess;
-import dataaccess.MemoryDataAccess;
+import dataaccess.DataAccessException;
 
 public class GameService {
     private final DataAccess dataAccess;
