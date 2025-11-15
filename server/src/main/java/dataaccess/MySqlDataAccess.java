@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import model.UserData;
 import model.GameData;
 import model.AuthData;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class MySqlDataAccess implements DataAccess {
 
@@ -62,18 +63,58 @@ public class MySqlDataAccess implements DataAccess {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException ex) {
-            throw new DataAccessException("failed to clear database");
+            throw new DataAccessException("failed to clear database", ex);
         }
     }
 
     @Override
     public void insertUser(UserData user) throws DataAccessException {
-        throw new DataAccessException("Not implemented");
+        if (user == null || user.username() == null) {
+            throw new DataAccessException("User data cannot be null");
+        }
+        if (getUser(user.username()) != null) {
+            throw new DataAccessException("User already exists");
+        }
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        String sql = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(sql)) {
+                preparedStatement.setString(1, user.username());
+                preparedStatement.setString(2, hashedPassword);
+                preparedStatement.setString(3, user.email());
+
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to insert user", ex);
+        }
     }
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
-        throw new DataAccessException("Not implemented");
+        if (username == null) {
+            throw new DataAccessException("username cannot be null");
+        }
+        String sql = "SELECT username, password, email FROM users WHERE username = ?";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(sql)) {
+                preparedStatement.setString(1, username);
+                try (var rs = preparedStatement.executeQuery()) {
+                    if (rs.next()) {
+                        // get data from table if row exists
+                        String dbUsername = rs.getString("username");
+                        String dbPassword = rs.getString("password"); // this password is the hashed one
+                        String dbEmail = rs.getString("email");
+                        return new UserData(dbUsername, dbPassword, dbEmail);
+                    } else {
+                        // no user found
+                        return null;
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to get user", ex);
+        }
     }
 
     @Override
