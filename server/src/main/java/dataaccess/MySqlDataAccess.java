@@ -1,6 +1,9 @@
 package dataaccess;
 
 import java.sql.SQLException;
+import java.sql.Statement;
+
+import com.google.gson.Gson;
 import model.UserData;
 import model.GameData;
 import model.AuthData;
@@ -119,7 +122,33 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public int insertGame(GameData game) throws DataAccessException {
-        throw new DataAccessException("Not implemented");
+        if (game == null) {
+            throw new DataAccessException("game data cannot be null");
+        }
+        Gson gson = new Gson();
+        String gameJson = gson.toJson(game.game());
+        String sql = "INSERT INTO games (whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?)";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, game.whiteUsername());
+                preparedStatement.setString(2, game.blackUsername());
+                preparedStatement.setString(3, game.gameName());
+                preparedStatement.setString(4, gameJson);
+
+                preparedStatement.executeUpdate();
+
+                try (var generatedKeys = preparedStatement.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int gameID = generatedKeys.getInt(1);
+                        return gameID;
+                    } else {
+                        throw new DataAccessException("couldn't get generated game ID");
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to insert game", ex);
+        }
     }
 
     @Override
