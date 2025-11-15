@@ -48,7 +48,22 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void clear() throws DataAccessException {
-        throw new DataAccessException("Not implemented");
+        String truncateUsers = "TRUNCATE TABLE users";
+        String truncateGames = "TRUNCATE TABLE games";
+        String truncateAuth = "TRUNCATE TABLE auth";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(truncateUsers)) {
+                preparedStatement.executeUpdate();
+            }
+            try (var preparedStatement = conn.prepareStatement(truncateGames)) {
+                preparedStatement.executeUpdate();
+            }
+            try (var preparedStatement = conn.prepareStatement(truncateAuth)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to clear database");
+        }
     }
 
     @Override

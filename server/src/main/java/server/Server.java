@@ -15,7 +15,7 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        // Initialize database and tables (ready for when you switch to MySQL)
+        // Initialize database and tables (ready for when I switch to MySQL)
         try {
             DatabaseManager.createDatabase();
             MySqlDataAccess mysqlDataAccess = new MySqlDataAccess();
