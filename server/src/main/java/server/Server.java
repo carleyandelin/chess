@@ -2,6 +2,8 @@ package server;
 
 import io.javalin.*;
 import dataaccess.DataAccess;
+import dataaccess.DatabaseManager;
+import dataaccess.MySqlDataAccess;
 import service.GameService;
 import dataaccess.MemoryDataAccess;
 import service.UserService;
@@ -13,6 +15,18 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
+        // Initialize database and tables (ready for when you switch to MySQL)
+        try {
+            DatabaseManager.createDatabase();
+            MySqlDataAccess mysqlDataAccess = new MySqlDataAccess();
+            mysqlDataAccess.createTables();
+        } catch (Exception e) {
+            // If database initialization fails, log it but continue with MemoryDataAccess
+            System.err.println("Warning: Could not initialize database: " + e.getMessage());
+        }
+
+        // Use MemoryDataAccess for now (so tests pass)
+        // TODO: Switch to MySqlDataAccess once all methods are implemented
         DataAccess dataAccess = new MemoryDataAccess();
         GameService gameService = new GameService(dataAccess);
         UserService userService = new UserService(dataAccess);
