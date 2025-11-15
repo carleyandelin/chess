@@ -8,6 +8,7 @@ import model.UserData;
 import model.GameData;
 import model.AuthData;
 import org.mindrot.jbcrypt.BCrypt;
+import chess.ChessGame;
 
 public class MySqlDataAccess implements DataAccess {
 
@@ -153,7 +154,34 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
-        throw new DataAccessException("Not implemented");
+        String sql = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games WHERE gameID = ?";
+
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(sql)) {
+                preparedStatement.setInt(1, gameID);
+
+                try (var rs = preparedStatement.executeQuery()) {
+                    if (rs.next()) {
+                        // get data from the row if exists
+                        int dbGameID = rs.getInt("gameID");
+                        String whiteUsername = rs.getString("whiteUsername");
+                        String blackUsername = rs.getString("blackUsername");
+                        String gameName = rs.getString("gameName");
+                        String gameJson = rs.getString("game");
+
+                        Gson gson = new Gson();
+                        ChessGame chessGame = gson.fromJson(gameJson, ChessGame.class);
+
+                        return new GameData(dbGameID, whiteUsername, blackUsername, gameName, chessGame);
+                    } else {
+                        // no game found
+                        return null;
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to get game", ex);
+        }
     }
 
     @Override
