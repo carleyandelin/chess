@@ -89,12 +89,18 @@ public class MySqlDataAccessTests {
 
     @Test
     public void getUser_Positive() throws Exception {
-        // implement
+        UserData test = new UserData("dupeUser", "pw1", "dupe1@example.com");
+        dataAccess.insertUser(test);
+        UserData result = dataAccess.getUser("dupeUser");
+
+        assertNotNull(result, "user needs to exist in data structure after insertUser");
+        assertEquals("dupeUser", result.username(), "username should match inserted username");
+        assertEquals("dupe1@example.com", result.email(), "email should match inserted email");
     }
 
     @Test
     public void getUser_Negative() throws Exception {
-        // implement
+        assertThrows(DataAccessException.class, () -> dataAccess.getUser(null), "Should throw exception for null username");
     }
 
     @Test
