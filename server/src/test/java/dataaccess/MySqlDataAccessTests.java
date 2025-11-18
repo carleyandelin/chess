@@ -7,6 +7,7 @@ import model.UserData;
 import model.GameData;
 import chess.ChessGame;
 import model.AuthData;
+import org.mindrot.jbcrypt.BCrypt;
 
 
 public class MySqlDataAccessTests {
@@ -59,12 +60,31 @@ public class MySqlDataAccessTests {
 
     @Test
     public void insertUser_Positive() throws Exception {
-        // implement
+        String plainPassword = "MySecret123";
+        UserData user = new UserData("testUser", plainPassword, "test@example.com");
+
+        dataAccess.insertUser(user);
+
+        UserData fetched = dataAccess.getUser("testUser");
+        assertNotNull(fetched, "Inserted user should be retrievable.");
+        assertEquals("testUser", fetched.username());
+        assertEquals("test@example.com", fetched.email());
+
+        assertTrue(BCrypt.checkpw(plainPassword, fetched.password()), "Passwords should match using BCrypt");
     }
 
     @Test
     public void insertUser_Negative() throws Exception {
-        // implement
+        // no duplicates allowed
+        UserData user1 = new UserData("dupeUser", "pw1", "dupe1@example.com");
+        dataAccess.insertUser(user1);
+        UserData user2 = new UserData("dupeUser", "pw2", "dupe2@example.com");
+        assertThrows(DataAccessException.class, () -> dataAccess.insertUser(user2), "Inserting duplicate username should fail.");
+
+        // can't be null
+        assertThrows(DataAccessException.class, () -> dataAccess.insertUser(null), "Inserting null user should fail.");
+        UserData nullNameUser = new UserData(null, "pw", "email@example.com");
+        assertThrows(DataAccessException.class, () -> dataAccess.insertUser(nullNameUser), "Inserting user with null username should fail.");
     }
 
     @Test
