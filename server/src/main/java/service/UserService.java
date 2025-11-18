@@ -55,7 +55,7 @@ public class UserService {
             }
             // get user
             UserData user = dataAccess.getUser(request.username());
-            if (user == null || !user.password().equals(request.password())) {
+            if (user == null || !org.mindrot.jbcrypt.BCrypt.checkpw(request.password(), user.password())) {
                 throw new ServiceException("Error: unauthorized", 401);
             }
             // create auth token

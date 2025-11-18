@@ -15,7 +15,7 @@ public class Server {
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
-        // Initialize database and tables (ready for when you switch to MySQL)
+        // Initialize database and tables (ready for when I switch to MySQL)
         try {
             DatabaseManager.createDatabase();
             MySqlDataAccess mysqlDataAccess = new MySqlDataAccess();
@@ -27,7 +27,7 @@ public class Server {
 
         // Use MemoryDataAccess for now (so tests pass)
         // TODO: Switch line below from MemoryDataAccess to MySqlDataAccess once all methods are implemented
-        DataAccess dataAccess = new MemoryDataAccess();
+        DataAccess dataAccess = new MySqlDataAccess();
         GameService gameService = new GameService(dataAccess);
         UserService userService = new UserService(dataAccess);
         ChessHandler handler = new ChessHandler(userService, gameService);
