@@ -214,7 +214,7 @@ public class MySqlDataAccess implements DataAccess {
         if (game == null) {
             throw new DataAccessException("game data cannot be null");
         }
-        String sql = "UPDATE games SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ?, WHERE gameID = ?";
+        String sql = "UPDATE games SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ? WHERE gameID = ?";
         Gson gson = new Gson();
         String gameJson = gson.toJson(game.game());
         try (var conn = DatabaseManager.getConnection();

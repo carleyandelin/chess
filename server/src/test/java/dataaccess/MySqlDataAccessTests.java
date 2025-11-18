@@ -176,12 +176,23 @@ public class MySqlDataAccessTests {
 
     @Test
     public void updateGame_Positive() throws Exception {
-        // implement
+        GameData original = new GameData(0, "w", "b", "Game", new ChessGame());
+        int gameId = dataAccess.insertGame(original);
+        ChessGame updatedGame = new ChessGame();
+        GameData updated = new GameData(gameId, "WhitePlayer", "BlackPlayer", "UpdatedName", updatedGame);
+        dataAccess.updateGame(updated);
+        GameData fetched = dataAccess.getGame(gameId);
+        assertNotNull(fetched);
+        assertEquals("UpdatedName", fetched.gameName());
+        assertEquals("WhitePlayer", fetched.whiteUsername());
+        assertEquals("BlackPlayer", fetched.blackUsername());
     }
 
     @Test
-    public void updateGame_Negative() throws Exception {
-        // implement
+    public void updateGame_Negative() {
+        GameData fake = new GameData(99999, "none", "none", "none", new ChessGame());
+        assertThrows(DataAccessException.class, () -> dataAccess.updateGame(fake), "Updating nonexistent game should throw");
+        assertThrows(DataAccessException.class, () -> dataAccess.updateGame(null), "Null update should throw");
     }
 
     @Test
