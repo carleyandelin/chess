@@ -211,7 +211,26 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void updateGame(GameData game) throws DataAccessException {
-        throw new DataAccessException("Not implemented");
+        if (game == null) {
+            throw new DataAccessException("game data cannot be null");
+        }
+        String sql = "UPDATE games SET whiteUsername = ?, blackUsername = ?, gameName = ?, game = ?, WHERE gameID = ?";
+        Gson gson = new Gson();
+        String gameJson = gson.toJson(game.game());
+        try (var conn = DatabaseManager.getConnection();
+            var preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setString(1, game.whiteUsername());
+            preparedStatement.setString(2, game.blackUsername());
+            preparedStatement.setString(3, game.gameName());
+            preparedStatement.setString(4, gameJson);
+            preparedStatement.setInt(5, game.gameID());
+            int changedRows = preparedStatement.executeUpdate();
+            if (changedRows == 0) {
+                throw new DataAccessException("no game found with given gameID");
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to update game data", ex);
+        }
     }
 
     @Override
