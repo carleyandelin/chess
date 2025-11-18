@@ -9,6 +9,8 @@ import chess.ChessGame;
 import chess.ChessBoard;
 import model.AuthData;
 import org.mindrot.jbcrypt.BCrypt;
+import java.util.Set;
+import java.util.HashSet;
 
 
 public class MySqlDataAccessTests {
@@ -128,17 +130,40 @@ public class MySqlDataAccessTests {
 
     @Test
     public void getGame_Positive() throws Exception {
-        // implement
+        GameData testGame = new GameData(0, "user1", "user2", "coolGame", new ChessGame());
+        int gameID = dataAccess.insertGame(testGame);
+        dataAccess.insertGame(testGame);
+        GameData result = dataAccess.getGame(gameID);
+
+        assertNotNull(result, "game needs to exist in data base");
+        assertEquals(gameID, result.gameID());
+        assertEquals("user1", result.whiteUsername());
+        assertEquals("user2", result.blackUsername());
+        assertEquals("coolGame", result.gameName());
+        assertEquals(new ChessGame(), result.game());
     }
 
     @Test
     public void getGame_Negative() throws Exception {
-        // implement
+        GameData result = dataAccess.getGame(99999); // unlikely ID
+        assertNull(result, "getGame should return null for a non-existent gameID");
     }
 
     @Test
     public void listGames_Positive() throws Exception {
-        // implement
+        GameData game1 = new GameData(0, "whiteA", "blackA", "Fun Game 1", new ChessGame());
+        GameData game2 = new GameData(0, "whiteB", "blackB", "Fun Game 2", new ChessGame());
+        int gameId1 = dataAccess.insertGame(game1);
+        int gameId2 = dataAccess.insertGame(game2);
+        GameData[] games = dataAccess.listGames();
+        assertNotNull(games, "listGames should not return null");
+        assertEquals(2, games.length, "There should be 2 games in the database");
+        Set<String> names = new HashSet<>();
+        for (GameData g : games) {
+            names.add(g.gameName());
+        }
+        assertTrue(names.contains("Fun Game 1"), "Should contain 'Fun Game 1'");
+        assertTrue(names.contains("Fun Game 2"), "Should contain 'Fun Game 2'");
     }
 
     @Test
