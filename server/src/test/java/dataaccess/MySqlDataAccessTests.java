@@ -235,11 +235,16 @@ public class MySqlDataAccessTests {
 
     @Test
     public void deleteAuth_Positive() throws Exception {
-        // implement
+        AuthData auth = new AuthData("todelete", "user");
+        dataAccess.insertAuth(auth);
+        assertNotNull(dataAccess.getAuth("todelete"));
+        dataAccess.deleteAuth("todelete");
+        assertNull(dataAccess.getAuth("todelete"));
     }
 
     @Test
-    public void deleteAuth_Negative() throws Exception {
-        // implement
+    public void deleteAuth_Negative() {
+        assertDoesNotThrow(() -> dataAccess.deleteAuth("nonexistentToken"));
+        assertThrows(DataAccessException.class, () -> dataAccess.deleteAuth(null));
     }
 }
