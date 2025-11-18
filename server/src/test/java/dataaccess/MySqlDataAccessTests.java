@@ -218,12 +218,19 @@ public class MySqlDataAccessTests {
 
     @Test
     public void getAuth_Positive() throws Exception {
-        // implement
+        AuthData auth = new AuthData("findMe", "bob");
+        dataAccess.insertAuth(auth);
+        AuthData got = dataAccess.getAuth("findMe");
+        assertNotNull(got);
+        assertEquals("findMe", got.authToken());
+        assertEquals("bob", got.username());
     }
 
     @Test
     public void getAuth_Negative() throws Exception {
-        // implement
+        AuthData got = dataAccess.getAuth("noSuchToken");
+        assertNull(got);
+        assertThrows(DataAccessException.class, () -> dataAccess.getAuth(null));
     }
 
     @Test

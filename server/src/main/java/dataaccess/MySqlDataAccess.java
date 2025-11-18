@@ -251,6 +251,9 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException("authToken cannot be null");
+        }
         String sql = "SELECT authToken, username FROM auth WHERE authToken = ?";
         try (var conn = DatabaseManager.getConnection();
              var preparedStatement = conn.prepareStatement(sql)) {
