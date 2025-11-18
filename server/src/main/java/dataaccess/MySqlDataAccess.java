@@ -188,7 +188,7 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public GameData[] listGames() throws DataAccessException {
-        String sql = "SELECT gameID, whiteUsername, blackUsername, gameName, game, FROM games";
+        String sql = "SELECT gameID, whiteUsername, blackUsername, gameName, game FROM games";
         List<GameData> games = new ArrayList<>();
         try (var conn = DatabaseManager.getConnection();
             var preparedStatement = conn.prepareStatement(sql);

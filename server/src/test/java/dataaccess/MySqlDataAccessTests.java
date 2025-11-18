@@ -36,28 +36,22 @@ public class MySqlDataAccessTests {
 
     @Test
     public void clear() throws Exception {
-        // Insert user
+        // insert data
         UserData user = new UserData("user1", "hashpass", "user1@example.com");
         dataAccess.insertUser(user);
-
-        // Insert auth
         AuthData auth = new AuthData("authToken1", "user1");
         dataAccess.insertAuth(auth);
-
-        // Insert game
         ChessGame chessGame = new ChessGame();
         GameData game = new GameData(0, "whiteTester", "blackTester", "testClear", chessGame);
         int gameID = dataAccess.insertGame(game);
-
-        // Confirm data exists
+        // check data exits
         assertNotNull(dataAccess.getUser("user1"), "User should exist before clear");
         assertNotNull(dataAccess.getAuth("authToken1"), "Auth should exist before clear");
         assertNotNull(dataAccess.getGame(gameID), "Game should exist before clear");
 
-        // Clear database
         dataAccess.clear();
 
-        // Now everything should be wiped
+        // check data is gone
         assertNull(dataAccess.getUser("user1"), "User should be gone after clear");
         assertNull(dataAccess.getAuth("authToken1"), "Auth should be gone after clear");
         assertNull(dataAccess.getGame(gameID), "Game should be gone after clear");
@@ -75,7 +69,7 @@ public class MySqlDataAccessTests {
 
     @Test
     public void getUser_Positive() throws Exception {
-        // Tests successful get u
+        // implement
     }
 
     @Test
@@ -110,7 +104,7 @@ public class MySqlDataAccessTests {
 
     @Test
     public void listGames_Negative() throws Exception {
-        // ensures not null data structure
+        // ensures empty list, not null
         GameData[] games = dataAccess.listGames();
         assertNotNull(games, "games array should not be null");
         assertEquals(0, games.length, "Should return 0 games");
