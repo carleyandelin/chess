@@ -9,6 +9,8 @@ import model.GameData;
 import model.AuthData;
 import org.mindrot.jbcrypt.BCrypt;
 import chess.ChessGame;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MySqlDataAccess implements DataAccess {
 
@@ -186,7 +188,25 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public GameData[] listGames() throws DataAccessException {
-        throw new DataAccessException("Not implemented");
+        String sql = "SELECT gameID, whiteUsername, blackUsername, gameName, game, FROM games";
+        List<GameData> games = new ArrayList<>();
+        try (var conn = DatabaseManager.getConnection();
+            var preparedStatement = conn.prepareStatement(sql);
+            var rs = preparedStatement.executeQuery()) {
+            Gson gson = new Gson();
+            while (rs.next()) {
+                int gameID = rs.getInt("gameID");
+                String whiteUsername = rs.getString("whiteUsername");
+                String blackUsername = rs.getString("blackUsername");
+                String gameName = rs.getString("gameName");
+                String gameJson = rs.getString("game");
+                ChessGame chessGame = gson.fromJson(gameJson, ChessGame.class);
+                games.add(new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame));
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to list games", ex);
+        }
+        return games.toArray(new GameData[0]);
     }
 
     @Override
@@ -196,7 +216,18 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public void insertAuth(AuthData auth) throws DataAccessException {
-        throw new DataAccessException("Not implemented");
+        if (auth == null || auth.authToken() == null || auth.username() == null) {
+            throw new DataAccessException("auth data cannot be null");
+        }
+        String sql = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+        try (var conn = DatabaseManager.getConnection();
+            var preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setString(1, auth.authToken());
+            preparedStatement.setString(2, auth.username());
+            preparedStatement.executeUpdate();
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to insert auth data", ex);
+        }
     }
 
     @Override

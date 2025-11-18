@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import model.UserData;
+import model.GameData;
+import chess.ChessGame;
+import model.AuthData;
 
 
 public class MySqlDataAccessTests {
@@ -21,108 +24,135 @@ public class MySqlDataAccessTests {
     // Basic code for testing each method below
     /*
     @Test
-    public void testMethod_Positive() {
+    public void testMethod_Positive() throws Exception {
         // implement
     }
 
     @Test
-    public void testMethod_Negative() {
+    public void testMethod_Negative() throws Exception {
         // implement
     }
      */
 
     @Test
-    public void clear() {
+    public void clear() throws Exception {
+        // Insert user
+        UserData user = new UserData("user1", "hashpass", "user1@example.com");
+        dataAccess.insertUser(user);
+
+        // Insert auth
+        AuthData auth = new AuthData("authToken1", "user1");
+        dataAccess.insertAuth(auth);
+
+        // Insert game
+        ChessGame chessGame = new ChessGame();
+        GameData game = new GameData(0, "whiteTester", "blackTester", "testClear", chessGame);
+        int gameID = dataAccess.insertGame(game);
+
+        // Confirm data exists
+        assertNotNull(dataAccess.getUser("user1"), "User should exist before clear");
+        assertNotNull(dataAccess.getAuth("authToken1"), "Auth should exist before clear");
+        assertNotNull(dataAccess.getGame(gameID), "Game should exist before clear");
+
+        // Clear database
+        dataAccess.clear();
+
+        // Now everything should be wiped
+        assertNull(dataAccess.getUser("user1"), "User should be gone after clear");
+        assertNull(dataAccess.getAuth("authToken1"), "Auth should be gone after clear");
+        assertNull(dataAccess.getGame(gameID), "Game should be gone after clear");
+    }
+
+    @Test
+    public void insertUser_Positive() throws Exception {
         // implement
     }
 
     @Test
-    public void insertUser_Positive() {
+    public void insertUser_Negative() throws Exception {
         // implement
     }
 
     @Test
-    public void insertUser_Negative() {
-        // implement
-    }
-
-    @Test
-    public void getUser_Positive() {
+    public void getUser_Positive() throws Exception {
         // Tests successful get u
     }
 
     @Test
-    public void getUser_Negative() {
+    public void getUser_Negative() throws Exception {
         // implement
     }
 
     @Test
-    public void insertGame_Positive() {
+    public void insertGame_Positive() throws Exception {
         // implement
     }
 
     @Test
-    public void insertGame_Negative() {
+    public void insertGame_Negative() throws Exception {
         // implement
     }
 
     @Test
-    public void getGame_Positive() {
+    public void getGame_Positive() throws Exception {
         // implement
     }
 
     @Test
-    public void getGame_Negative() {
+    public void getGame_Negative() throws Exception {
         // implement
     }
 
     @Test
-    public void listGames_Positive() {
+    public void listGames_Positive() throws Exception {
         // implement
     }
 
     @Test
-    public void listGames_Negative() {
+    public void listGames_Negative() throws Exception {
+        // ensures not null data structure
+        GameData[] games = dataAccess.listGames();
+        assertNotNull(games, "games array should not be null");
+        assertEquals(0, games.length, "Should return 0 games");
+    }
+
+    @Test
+    public void updateGame_Positive() throws Exception {
         // implement
     }
 
     @Test
-    public void updateGame_Positive() {
+    public void updateGame_Negative() throws Exception {
         // implement
     }
 
     @Test
-    public void updateGame_Negative() {
+    public void insertAuth_Positive() throws Exception {
         // implement
     }
 
     @Test
-    public void insertAuth_Positive() {
+    public void insertAuth_Negative() throws Exception {
         // implement
     }
 
     @Test
-    public void insertAuth_Negative() {
+    public void getAuth_Positive() throws Exception {
         // implement
     }
 
     @Test
-    public void getAuth_Positive() {
+    public void getAuth_Negative() throws Exception {
         // implement
     }
 
     @Test
-    public void getAuth_Negative() {
+    public void deleteAuth_Positive() throws Exception {
         // implement
     }
 
     @Test
-    public void deleteAuth_Positive() {
-        // implement
-    }
-
-    @Test
-    public void deleteAuth_Negative() {
+    public void deleteAuth_Negative() throws Exception {
         // implement
     }
 }
