@@ -125,7 +125,7 @@ public class MySqlDataAccess implements DataAccess {
 
     @Override
     public int insertGame(GameData game) throws DataAccessException {
-        if (game == null) {
+        if (game == null || game.game() == null || game.gameName() == null) {
             throw new DataAccessException("game data cannot be null");
         }
         Gson gson = new Gson();

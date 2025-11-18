@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import model.UserData;
 import model.GameData;
 import chess.ChessGame;
+import chess.ChessBoard;
 import model.AuthData;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -66,7 +67,7 @@ public class MySqlDataAccessTests {
         dataAccess.insertUser(user);
 
         UserData fetched = dataAccess.getUser("testUser");
-        assertNotNull(fetched, "Inserted user should be retrievable.");
+        assertNotNull(fetched, "Inserted user should be retrievable");
         assertEquals("testUser", fetched.username());
         assertEquals("test@example.com", fetched.email());
 
@@ -89,8 +90,8 @@ public class MySqlDataAccessTests {
 
     @Test
     public void getUser_Positive() throws Exception {
-        UserData test = new UserData("dupeUser", "pw1", "dupe1@example.com");
-        dataAccess.insertUser(test);
+        UserData testUser = new UserData("dupeUser", "pw1", "dupe1@example.com");
+        dataAccess.insertUser(testUser);
         UserData result = dataAccess.getUser("dupeUser");
 
         assertNotNull(result, "user needs to exist in data structure after insertUser");
@@ -105,12 +106,24 @@ public class MySqlDataAccessTests {
 
     @Test
     public void insertGame_Positive() throws Exception {
-        // implement
+        GameData testGame = new GameData(0, "user1", "user2", "coolGame", new ChessGame());
+        int gameID = dataAccess.insertGame(testGame);
+        dataAccess.insertGame(testGame);
+        GameData fetched = dataAccess.getGame(gameID);
+
+        assertNotNull(fetched, "Inserted game should be retrievable");
+        assertEquals(gameID, fetched.gameID(), "gameID should match inserted gameID");
+        assertEquals("user1", fetched.whiteUsername(), "white username should match inserted one");
+        assertEquals("user2", fetched.blackUsername(), "black username should match inserted one");
+        assertEquals("coolGame", fetched.gameName(), "gameName username should match inserted one");
+        assertEquals(new ChessGame(), fetched.game(), "game should match inserted one");
     }
 
     @Test
     public void insertGame_Negative() throws Exception {
-        // implement
+        GameData invalid = new GameData(0, "word", "blurb", "name", null);
+        assertThrows(DataAccessException.class, () -> dataAccess.insertGame(invalid),
+                "GameData with null game should throw an exception.");
     }
 
     @Test
