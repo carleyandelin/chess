@@ -197,12 +197,23 @@ public class MySqlDataAccessTests {
 
     @Test
     public void insertAuth_Positive() throws Exception {
-        // implement
+        AuthData auth = new AuthData("token123", "alice");
+        dataAccess.insertAuth(auth);
+
+        AuthData found = dataAccess.getAuth("token123");
+        assertNotNull(found);
+        assertEquals("token123", found.authToken());
+        assertEquals("alice", found.username());
     }
 
     @Test
-    public void insertAuth_Negative() throws Exception {
-        // implement
+    public void insertAuth_Negative() {
+        assertThrows(DataAccessException.class, () -> dataAccess.insertAuth(null));
+        assertThrows(DataAccessException.class, () -> dataAccess.insertAuth(new AuthData(null, "bob")));
+        assertThrows(DataAccessException.class, () -> dataAccess.insertAuth(new AuthData("sometoken", null)));
+        AuthData auth = new AuthData("dupeToken", "alice");
+        assertDoesNotThrow(() -> dataAccess.insertAuth(auth));
+        assertThrows(DataAccessException.class, () -> dataAccess.insertAuth(new AuthData("dupeToken", "bob")));
     }
 
     @Test
