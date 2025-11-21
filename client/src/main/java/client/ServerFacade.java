@@ -16,6 +16,17 @@ public class ServerFacade {
         this.serverURL = "http://localhost:" + port;
     }
 
+    public void clear() throws Exception {
+        URL url = new URL(serverURL + "/db");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("DELETE");
+        int status = conn.getResponseCode();
+        conn.disconnect();
+        if (status != 200) {
+            throw new Exception("Failed to clear DB: status " + status);
+        }
+    }
+
     public AuthData register(String username, String password, String email) throws Exception {
         URL url = new URL(serverURL + "/user");
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -89,7 +100,18 @@ public class ServerFacade {
     }
 
     public void logout(String authToken) throws Exception {
-        throw new RuntimeException("Not yet implemented");
+        URL url = new URL(serverURL + "/session");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("DELETE");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setRequestProperty("Authorization", authToken);
+
+        int status = conn.getResponseCode();
+        conn.disconnect();
+
+        if (status != 200) {
+            throw new Exception("Logout failed with status " + status);
+        }
     }
 
     public void createGame(String authToken, String gameName) throws Exception {

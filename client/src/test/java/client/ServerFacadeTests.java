@@ -25,7 +25,7 @@ public class ServerFacadeTests {
 
     @BeforeEach
     public void clearServer() throws Exception {
-        //TODO
+        facade.clear();
     }
 
     @Test
@@ -46,8 +46,8 @@ public class ServerFacadeTests {
 
     @Test
     void loginPositive() throws Exception {
-        facade.register("user10", "pass10", "user10@email.com");
-        AuthData result = facade.login("user10", "pass10");
+        facade.register("user10", "pass10", "user10@email.com"); // Register first
+        AuthData result = facade.login("user10", "pass10");      // Then login
         Assertions.assertNotNull(result);
         Assertions.assertNotNull(result.authToken());
         Assertions.assertEquals("user10", result.username());
@@ -58,6 +58,27 @@ public class ServerFacadeTests {
         facade.register("user11", "pass11", "user11@email.com");
         Assertions.assertThrows(Exception.class, () -> {
             facade.login("user11", "notTheRightPassword");
+        });
+    }
+
+    @Test
+    void loginNegative_noSuchUser() {
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.login("nonexistent", "nopass");
+        });
+    }
+
+    @Test
+    void logoutPositive() throws Exception {
+        AuthData data = facade.register("logoutUser", "logoutPass", "logout@email.com");
+        facade.logout(data.authToken());
+        // Attempt to create game (should fail or require login) if you want further assertion
+    }
+
+    @Test
+    void logoutNegative_invalidToken() {
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.logout("bogus-token");
         });
     }
 }
