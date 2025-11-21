@@ -115,4 +115,29 @@ public class ServerFacadeTests {
             facade.listGames("bad-token");
         });
     }
+
+    @Test
+    void joinGamePositive() throws Exception {
+        AuthData user = facade.register("joinuser", "pw", "join@email.com");
+        facade.createGame(user.authToken(), "joinable game");
+        List<GameData> games = facade.listGames(user.authToken());
+        int gameId = games.stream()
+                .filter(g -> g.gameName().equals("joinable game"))
+                .findFirst()
+                .orElseThrow()
+                .gameID();
+        // trying to join as white
+        facade.joinGame(user.authToken(), gameId, "WHITE");
+    }
+
+    @Test
+    void joinGameNegative_invalidToken() throws Exception {
+        AuthData user = facade.register("joinuser2", "pw", "join2@email.com");
+        facade.createGame(user.authToken(), "another game");
+        List<GameData> games = facade.listGames(user.authToken());
+        int gameId = games.get(0).gameID();
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.joinGame("bogus-token", gameId, "WHITE");
+        });
+    }
 }

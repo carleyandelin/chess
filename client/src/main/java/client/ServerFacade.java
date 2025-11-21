@@ -171,7 +171,27 @@ public class ServerFacade {
     }
 
     public void joinGame(String authToken, int gameID, String color) throws Exception {
-        throw new RuntimeException("Not yet implemented");
+        URL url = new URL(serverURL + "/game");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("PUT");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("Authorization", authToken);
+        conn.setDoOutput(true);
+
+        // build JSON body (adjust field names if your model uses different ones)
+        String body = String.format("{\"gameID\":%d,\"playerColor\":\"%s\"}", gameID, color);
+
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(body.getBytes());
+            os.flush();
+        }
+
+        int status = conn.getResponseCode();
+        conn.disconnect();
+        if (status != 200) {
+            throw new Exception("Join game failed: status " + status);
+        }
     }
 
     public void observeGame(String authToken, int gameID) throws Exception {
