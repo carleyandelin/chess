@@ -4,6 +4,9 @@ import org.junit.jupiter.api.*;
 import server.Server;
 import client.ServerFacade;
 import model.AuthData;
+import model.GameData;
+
+import java.util.List;
 
 public class ServerFacadeTests {
 
@@ -93,6 +96,23 @@ public class ServerFacadeTests {
     void createGameNegative_unauthorized() {
         Assertions.assertThrows(Exception.class, () -> {
             facade.createGame("invalid-token", "should fail");
+        });
+    }
+
+    @Test
+    void listGamesPositive() throws Exception {
+        AuthData user = facade.register("lg_positive", "pw", "lgpos@email.com");
+        facade.createGame(user.authToken(), "fun game");
+        List<GameData> games = facade.listGames(user.authToken());
+        boolean found = games.stream()
+                .anyMatch(g -> g.gameName().equals("fun game"));
+        Assertions.assertTrue(found, "Newly created game should be listed.");
+    }
+
+    @Test
+    void listGamesNegative_invalidToken() {
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.listGames("bad-token");
         });
     }
 }

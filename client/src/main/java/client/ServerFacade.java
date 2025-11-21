@@ -138,7 +138,36 @@ public class ServerFacade {
     }
 
     public List<GameData> listGames(String authToken) throws Exception {
-        throw new RuntimeException("Not yet implemented");
+        URL url = new URL(serverURL + "/game");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setRequestProperty("Authorization", authToken);
+
+        int status = conn.getResponseCode();
+        if (status == 200) {
+            try (Reader reader = new InputStreamReader(conn.getInputStream())) {
+                // Parse top-level object { "games": [...] }
+                var jsonObject = gson.fromJson(reader, com.google.gson.JsonObject.class);
+                var gamesArray = jsonObject.getAsJsonArray("games");
+                GameData[] games = gson.fromJson(gamesArray, GameData[].class);
+                return Arrays.asList(games);
+            } finally {
+                conn.disconnect();
+            }
+        } else {
+            try (Reader reader = new InputStreamReader(conn.getErrorStream())) {
+                StringBuilder sb = new StringBuilder();
+                char[] buf = new char[1024];
+                int read;
+                while ((read = reader.read(buf)) > 0) {
+                    sb.append(buf, 0, read);
+                }
+                throw new Exception("List games failed: " + sb.toString());
+            } finally {
+                conn.disconnect();
+            }
+        }
     }
 
     public void joinGame(String authToken, int gameID, String color) throws Exception {
