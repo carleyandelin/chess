@@ -115,7 +115,26 @@ public class ServerFacade {
     }
 
     public void createGame(String authToken, String gameName) throws Exception {
-        throw new RuntimeException("Not yet implemented");
+        URL url = new URL(serverURL + "/game");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("Authorization", authToken);
+        conn.setDoOutput(true);
+
+        String body = "{\"gameName\":\"" + gameName + "\"}";
+
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(body.getBytes());
+            os.flush();
+        }
+
+        int status = conn.getResponseCode();
+        conn.disconnect();
+        if (status != 200) {
+            throw new Exception("Create game failed: status " + status);
+        }
     }
 
     public List<GameData> listGames(String authToken) throws Exception {

@@ -81,4 +81,18 @@ public class ServerFacadeTests {
             facade.logout("bogus-token");
         });
     }
+
+    @Test
+    void createGamePositive() throws Exception {
+        AuthData user = facade.register("gameUser", "pw", "guser@email.com");
+        facade.createGame(user.authToken(), "my game");
+        // You may want to check listGames here to verify a new game exists
+    }
+
+    @Test
+    void createGameNegative_unauthorized() {
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.createGame("invalid-token", "should fail");
+        });
+    }
 }
