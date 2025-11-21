@@ -21,6 +21,7 @@ public class GameService {
         }
     }
 
+    // CHANGED: Now returns array of full GameData (with ChessGame board)
     public ListGamesResult listGames(ListGamesRequest request) throws ServiceException {
         try {
             // validate auth token
@@ -28,14 +29,9 @@ public class GameService {
             if (auth == null) {
                 throw new ServiceException("Error: unauthorized", 401);
             }
-            // get all games
+            // get all games, include full board (GameData)
             GameData[] games = dataAccess.listGames();
-            GameSummary[] gameSummaries = new GameSummary[games.length];
-            for (int i = 0; i < games.length; i++) {
-                GameData game = games[i];
-                gameSummaries[i] = new GameSummary(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName());
-            }
-            return new ListGamesResult(gameSummaries);
+            return new ListGamesResult(games);
         } catch (DataAccessException e) {
             throw new ServiceException("Error: " + e.getMessage(), 500);
         }
@@ -59,7 +55,10 @@ public class GameService {
         }
     }
 
-    public void joinGame(JoinGameRequest request) throws ServiceException {
+    // (Optional but recommended) When you implement observe, return GameData with board here as well
+
+    // Also consider updating joinGame to fetch and return the updated GameData after update (for handler response)
+    public GameData joinGame(JoinGameRequest request) throws ServiceException {
         try {
             AuthData auth = dataAccess.getAuth(request.authToken());
             if (auth == null) {
@@ -75,7 +74,7 @@ public class GameService {
 
             // If playerColor is null, allow as observer !! this was a huge problem for me
             if (request.playerColor() == null) {
-                return;
+                return game;
             }
 
             if (!"WHITE".equals(request.playerColor()) && !"BLACK".equals(request.playerColor())) {
@@ -95,6 +94,8 @@ public class GameService {
             GameData updatedGame = new GameData(game.gameID(), whiteUsername, blackUsername,
                     game.gameName(), game.game());
             dataAccess.updateGame(updatedGame);
+
+            return updatedGame; // NEW: Return the updated game data!
         } catch (DataAccessException e) {
             throw new ServiceException("Error: " + e.getMessage(), 500);
         }
@@ -106,7 +107,5 @@ public class GameService {
     public record CreateGameResult(int gameID) {}
 
     public record ListGamesRequest(String authToken) {}
-    public record ListGamesResult(GameSummary[] games) {}
-    public record GameSummary(int gameID, String whiteUsername, String blackUsername, String gameName) {}
-
+    public record ListGamesResult(GameData[] games) {}  // CHANGED: was GameSummary[]
 }

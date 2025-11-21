@@ -5,6 +5,7 @@ import service.GameService;
 import service.ServiceException;
 import service.UserService;
 import com.google.gson.JsonObject;
+import model.GameData;
 
 public class ChessHandler {
     private final GameService gameService;
@@ -75,7 +76,7 @@ public class ChessHandler {
             GameService.ListGamesRequest request = new GameService.ListGamesRequest(authToken);
             GameService.ListGamesResult result = gameService.listGames(request);
             context.status(200);
-            context.result(gson.toJson(result));
+            context.result(gson.toJson(result)); // Now serializes full GameData[] with board state!
         } catch (ServiceException e) {
             context.status(e.getStatusCode());
             context.result(createErrorResponse(e.getMessage()));
@@ -126,9 +127,9 @@ public class ChessHandler {
             int gameID = requestBody.get("gameID").getAsInt();
 
             GameService.JoinGameRequest request = new GameService.JoinGameRequest(authToken, playerColor, gameID);
-            gameService.joinGame(request);
+            GameData updatedGame = gameService.joinGame(request); // NEW: fetch and return updated GameData!
             context.status(200);
-            context.result("{}");
+            context.result(gson.toJson(updatedGame));
         } catch (ServiceException e) {
             context.status(e.getStatusCode());
             context.result(createErrorResponse(e.getMessage()));
