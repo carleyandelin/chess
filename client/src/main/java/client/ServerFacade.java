@@ -195,6 +195,35 @@ public class ServerFacade {
     }
 
     public void observeGame(String authToken, int gameID) throws Exception {
-        throw new RuntimeException("Not yet implemented");
+        URL url = new URL(serverURL + "/game");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("PUT");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("Authorization", authToken);
+        conn.setDoOutput(true);
+
+        String body = String.format("{\"gameID\":%d,\"playerColor\":null}", gameID);
+
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(body.getBytes());
+            os.flush();
+        }
+
+        int status = conn.getResponseCode();
+        if (status != 200) {
+            InputStream errorStream = conn.getErrorStream();
+            if (errorStream != null) {
+                try (BufferedReader br = new BufferedReader(new InputStreamReader(errorStream))) {
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        System.err.println(line);
+                    }
+                }
+            }
+            conn.disconnect();
+            throw new Exception("Observe game failed: status " + status);
+        }
+        conn.disconnect();
     }
 }

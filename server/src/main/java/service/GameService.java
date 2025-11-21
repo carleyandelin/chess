@@ -68,19 +68,20 @@ public class GameService {
             if (request.gameID() <= 0) {
                 throw new ServiceException("Error: bad request", 400);
             }
-            if (request.playerColor() == null) {
-                throw new ServiceException("Error: bad request", 400);
-            }
-            // check if white or black
-            if (!"WHITE".equals(request.playerColor()) && !"BLACK".equals(request.playerColor())) {
-                throw new ServiceException("Error: bad request", 400);
-            }
-            // get game
             GameData game = dataAccess.getGame(request.gameID());
             if (game == null) {
                 throw new ServiceException("Error: bad request", 400);
             }
-            // check if colors taken
+
+            // If playerColor is null, allow as observer !! this was a huge problem for me
+            if (request.playerColor() == null) {
+                return;
+            }
+
+            if (!"WHITE".equals(request.playerColor()) && !"BLACK".equals(request.playerColor())) {
+                throw new ServiceException("Error: bad request", 400);
+            }
+
             String username = auth.username();
             if ("WHITE".equals(request.playerColor()) && game.whiteUsername() != null) {
                 throw new ServiceException("Error: already taken", 403);
@@ -88,7 +89,7 @@ public class GameService {
             if ("BLACK".equals(request.playerColor()) && game.blackUsername() != null) {
                 throw new ServiceException("Error: already taken", 403);
             }
-            // update game
+            // update game for joining as player
             String whiteUsername = "WHITE".equals(request.playerColor()) ? username : game.whiteUsername();
             String blackUsername = "BLACK".equals(request.playerColor()) ? username : game.blackUsername();
             GameData updatedGame = new GameData(game.gameID(), whiteUsername, blackUsername,

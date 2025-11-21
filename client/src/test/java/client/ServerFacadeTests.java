@@ -140,4 +140,30 @@ public class ServerFacadeTests {
             facade.joinGame("bogus-token", gameId, "WHITE");
         });
     }
+
+    @Test
+    void observeGamePositive() throws Exception {
+
+        AuthData user = facade.register("observeuser", "pw", "observe@email.com");
+        facade.createGame(user.authToken(), "watch me");
+        List<GameData> games = facade.listGames(user.authToken());
+        int gameID = games.stream()
+                .filter(g -> g.gameName().equals("watch me"))
+                .findFirst().orElseThrow().gameID();
+
+        AuthData observer = facade.register("spectator", "pw", "watcher@email.com");
+        facade.observeGame(observer.authToken(), gameID); // Use observer's token!
+    }
+
+    @Test
+    void observeGameNegative_invalidToken() throws Exception {
+        AuthData user = facade.register("observeuser2", "pw", "observe2@email.com");
+        facade.createGame(user.authToken(), "watchfail");
+        List<GameData> games = facade.listGames(user.authToken());
+        int gameID = games.get(0).gameID();
+
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.observeGame("bogus-token", gameID);
+        });
+    }
 }

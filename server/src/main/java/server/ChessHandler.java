@@ -112,20 +112,17 @@ public class ChessHandler {
             String authToken = context.header("authorization");
             JsonObject requestBody = gson.fromJson(context.body(), JsonObject.class);
 
-            // Check if required fields exist and are not null
-            if (!requestBody.has("playerColor") || requestBody.get("playerColor").isJsonNull()) {
+            if (!requestBody.has("playerColor") || !requestBody.has("gameID") || requestBody.get("gameID").isJsonNull()) {
                 context.status(400);
                 context.result(createErrorResponse("Error: bad request"));
                 return;
             }
 
-            if (!requestBody.has("gameID") || requestBody.get("gameID").isJsonNull()) {
-                context.status(400);
-                context.result(createErrorResponse("Error: bad request"));
-                return;
+            String playerColor = null;
+            if (!requestBody.get("playerColor").isJsonNull()) {
+                playerColor = requestBody.get("playerColor").getAsString();
             }
 
-            String playerColor = requestBody.get("playerColor").getAsString();
             int gameID = requestBody.get("gameID").getAsInt();
 
             GameService.JoinGameRequest request = new GameService.JoinGameRequest(authToken, playerColor, gameID);
@@ -136,7 +133,7 @@ public class ChessHandler {
             context.status(e.getStatusCode());
             context.result(createErrorResponse(e.getMessage()));
         } catch (Exception e) {
-            // Handle any other exceptions (like JSON parsing errors)
+            e.printStackTrace();
             context.status(400);
             context.result(createErrorResponse("Error: bad request"));
         }
