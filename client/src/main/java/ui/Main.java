@@ -4,7 +4,7 @@ import client.ServerFacade;
 
 public class Main {
     public static void main(String[] args) {
-        // You can change the greeting if you like!
+        // I can customize this however I want to
         System.out.println("""
         ===========================
         |   Welcome To  Chess!    |

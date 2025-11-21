@@ -122,7 +122,18 @@ public class PreloginUI {
         String msg = e.getMessage();
         if (msg == null || msg.isBlank())
             return "Unknown error (check server connection).";
-        // You may add regex here to filter internal backend details
+        int idx = msg.indexOf("\"message\":\"");
+        if (idx != -1) {
+            int startIdx = idx + "\"message\":\"".length();
+            int endIdx = msg.indexOf("\"", startIdx);
+            if (endIdx != -1) {
+                return msg.substring(startIdx, endIdx);
+            }
+        }
+        // hide raw output if json doesn't match one above
+        if (msg.startsWith("{") && msg.endsWith("}")) {
+            return "An error occurred (details hidden).";
+        }
         return msg;
     }
 

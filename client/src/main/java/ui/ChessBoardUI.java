@@ -26,18 +26,18 @@ public class ChessBoardUI {
 
         // Map chars to unicode (adjust as needed for your board)
         Map<Character, String> pieceMap = Map.ofEntries(
-                Map.entry('K', EscapeSequences.WHITE_KING),
-                Map.entry('Q', EscapeSequences.WHITE_QUEEN),
-                Map.entry('B', EscapeSequences.WHITE_BISHOP),
-                Map.entry('N', EscapeSequences.WHITE_KNIGHT),
-                Map.entry('R', EscapeSequences.WHITE_ROOK),
-                Map.entry('P', EscapeSequences.WHITE_PAWN),
-                Map.entry('k', EscapeSequences.BLACK_KING),
-                Map.entry('q', EscapeSequences.BLACK_QUEEN),
-                Map.entry('b', EscapeSequences.BLACK_BISHOP),
-                Map.entry('n', EscapeSequences.BLACK_KNIGHT),
-                Map.entry('r', EscapeSequences.BLACK_ROOK),
-                Map.entry('p', EscapeSequences.BLACK_PAWN),
+                Map.entry('k', EscapeSequences.WHITE_KING),
+                Map.entry('q', EscapeSequences.WHITE_QUEEN),
+                Map.entry('b', EscapeSequences.WHITE_BISHOP),
+                Map.entry('n', EscapeSequences.WHITE_KNIGHT),
+                Map.entry('r', EscapeSequences.WHITE_ROOK),
+                Map.entry('p', EscapeSequences.WHITE_PAWN),
+                Map.entry('K', EscapeSequences.BLACK_KING),
+                Map.entry('Q', EscapeSequences.BLACK_QUEEN),
+                Map.entry('B', EscapeSequences.BLACK_BISHOP),
+                Map.entry('N', EscapeSequences.BLACK_KNIGHT),
+                Map.entry('R', EscapeSequences.BLACK_ROOK),
+                Map.entry('P', EscapeSequences.BLACK_PAWN),
                 Map.entry('.', EscapeSequences.EMPTY),
                 Map.entry(' ', EscapeSequences.EMPTY)
         );
@@ -60,7 +60,7 @@ public class ChessBoardUI {
                 boolean lightSquare = (rankIdx + fileIdx) % 2 == 0;
 
                 // Set pastel background colors!
-                System.out.print(lightSquare ? EscapeSequences.SET_BG_COLOR_LIGHT_PINK : EscapeSequences.SET_BG_COLOR_DARK_PURPLE);
+                System.out.print(lightSquare ? EscapeSequences.SET_BG_COLOR_DARK_PURPLE : EscapeSequences.SET_BG_COLOR_LIGHT_PINK);
                 System.out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
 
                 // Draw piece or empty
