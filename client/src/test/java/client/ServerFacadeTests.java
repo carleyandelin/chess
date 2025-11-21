@@ -1,8 +1,9 @@
+package client;
+
 import org.junit.jupiter.api.*;
 import server.Server;
-
-// the statice serverfacade line and facade = new serverfacade line are from the github page. don't know
-// why they're causing errors.
+import client.ServerFacade;
+import model.AuthData;
 
 public class ServerFacadeTests {
 
@@ -22,10 +23,24 @@ public class ServerFacadeTests {
         server.stop();
     }
 
-
-    @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+    @BeforeEach
+    public void clearServer() throws Exception {
+        //TODO
     }
 
+    @Test
+    void registerPositive() throws Exception {
+        AuthData result = facade.register("user1", "pass", "u1@email.com");
+        Assertions.assertNotNull(result);
+        Assertions.assertNotNull(result.authToken());
+        Assertions.assertEquals("user1", result.username());
+    }
+
+    @Test
+    void registerNegative() throws Exception {    // duplicate user
+        facade.register("user2", "pass", "u2@email.com");
+        Assertions.assertThrows(Exception.class, () -> {
+            facade.register("user2", "anotherpass", "other@email.com");
+        });
+    }
 }
