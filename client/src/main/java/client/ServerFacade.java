@@ -53,7 +53,39 @@ public class ServerFacade {
     }
 
     public AuthData login(String username, String password) throws Exception {
-        throw new RuntimeException("Not yet implemented");
+        URL url = new URL(serverURL + "/session");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Accept", "application/json");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setDoOutput(true);
+
+        UserData req = new UserData(username, password, null);
+        String json = gson.toJson(req);
+
+        try (OutputStream os = conn.getOutputStream()) {
+            os.write(json.getBytes());
+            os.flush();
+        }
+
+        int status = conn.getResponseCode();
+        Reader reader;
+        if (status == 200) {
+            reader = new InputStreamReader(conn.getInputStream());
+            AuthData result = gson.fromJson(reader, AuthData.class);
+            conn.disconnect();
+            return result;
+        } else {
+            reader = new InputStreamReader(conn.getErrorStream());
+            StringBuilder sb = new StringBuilder();
+            char[] buf = new char[1024];
+            int read;
+            while ((read = reader.read(buf)) > 0) {
+                sb.append(buf, 0, read);
+            }
+            conn.disconnect();
+            throw new Exception("Login failed: " + sb);
+        }
     }
 
     public void logout(String authToken) throws Exception {
